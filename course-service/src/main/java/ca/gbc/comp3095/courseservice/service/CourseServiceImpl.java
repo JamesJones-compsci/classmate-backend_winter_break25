@@ -22,6 +22,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
 
     public CourseServiceImpl(CourseRepository courseRepository){
+
         this.courseRepository = courseRepository;
     }
 
@@ -67,5 +68,33 @@ public class CourseServiceImpl implements CourseService {
                 saved.getTitle(),
                 saved.getDescription()
         );
+    }
+
+    // -- New method: updateCourse() -- //
+    @Override
+    public CourseResponseDTO updateCourse(Long id, CourseRequestDTO dto){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException(id));
+
+        course.setCode(dto.getCode());
+        course.setTitle(dto.getTitle());
+        course.setDescription(dto.getDescription());
+
+        Course saved = courseRepository.save(course);
+
+        return new CourseResponseDTO(
+                saved.getId(),
+                saved.getCode(),
+                saved.getTitle(),
+                saved.getDescription()
+        );
+    }
+
+    // -- New method: deleteCourse() -- //
+    @Override
+    public void deleteCourse(Long id){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException(id));
+        courseRepository.delete(course);
     }
 }

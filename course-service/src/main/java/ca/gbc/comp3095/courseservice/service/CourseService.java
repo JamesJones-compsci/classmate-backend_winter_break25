@@ -13,4 +13,9 @@ public interface CourseService {
 
     CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO);
 
+    // -- New methods for PUT / DELETE --- //
+    CourseResponseDTO updateCourse(Long id, CourseRequestDTO courseRequestDTO);
+
+    void deleteCourse(Long id);
+
 }

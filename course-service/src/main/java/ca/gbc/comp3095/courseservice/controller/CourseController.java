@@ -46,4 +46,22 @@ public class CourseController {
         CourseResponseDTO created = courseService.createCourse(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    // -- New endpoint: updateCourse() = update -- //
+    @PutMapping("/{id}")
+    public ResponseEntity<CourseResponseDTO> updateCourse(
+            @PathVariable Long id,
+            @Valid @RequestBody CourseRequestDTO dto){
+        CourseResponseDTO updated = courseService.updateCourse(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    // -- New endpoint: deleteCourse() = delete -- //
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id){
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();   // 204 No Content
+    }
 }
+
+
