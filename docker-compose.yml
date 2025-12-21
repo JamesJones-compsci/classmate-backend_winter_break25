@@ -1,0 +1,65 @@
+# ----------------------------------------------------------------------------------
+# Commands to run this compose file:
+#
+#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d
+#       - Starts containers in detached mode (-d)
+#       - Uses existing images if already built
+#
+#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d --build
+#       - Forces rebuild of images before starting containers
+# ----------------------------------------------------------------------------------
+
+version: "3.9"
+
+services:
+
+  course-service:
+    container_name: course-service
+    build:
+      context: ./course-service
+    ports:
+      - "8084:8080"
+    env_file:
+      - .env
+    networks:
+      - classmate-network
+
+
+  grade-service:
+    container_name: grade-service
+    build:
+      context: ./grade-service
+    ports:
+      - "8085:8081"
+    env_file:
+      - .env
+    networks:
+      - classmate-network
+
+
+  task-service:
+    container_name: task-service
+    build:
+      context: ./task-service
+    ports:
+      - "8086:8083"
+    env_file:
+      - .env
+    networks:
+      - classmate-network
+
+
+  reminder-service:
+    container_name: reminder-service
+    build:
+      context: ./reminder-service
+    ports:
+      - "8087:8082"
+    env_file:
+      - .env
+    networks:
+      - classmate-network
+
+networks:
+  classmate-network:
+    driver: bridge
