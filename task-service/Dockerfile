@@ -1,7 +1,7 @@
 #----------------------------------------------------------------
 # Stage 1: Build the application - Use a base JDK image
 #----------------------------------------------------------------
-FROM eclipse-temurin:17-jdk AS builder
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ RUN ./gradlew bootJar --no-daemon
 #----------------------------------------------------------------
 # Stage 2: Run the application
 #----------------------------------------------------------------
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
