@@ -19,6 +19,8 @@ services:
       context: ./api-gateway
     ports:
       - "8089:8088"         # Host port 8088 routes through gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - classmate-network
     depends_on:
@@ -35,6 +37,8 @@ services:
       - "8084:8080"
     env_file:
       - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - classmate-network
 
@@ -47,6 +51,8 @@ services:
       - "8085:8081"
     env_file:
       - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - classmate-network
 
@@ -59,6 +65,8 @@ services:
       - "8086:8083"
     env_file:
       - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - classmate-network
 
@@ -71,6 +79,8 @@ services:
       - "8087:8082"
     env_file:
       - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - classmate-network
 
