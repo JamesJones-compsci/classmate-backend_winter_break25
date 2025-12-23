@@ -41,7 +41,7 @@ public class ApiGatewayApplication {
 
 				// Route /api/v1/reminders/** to reminder-service
 				.route("reminder-service", r -> r.path("/api/v1/reminders/**")
-						.uri("http://reminder-service:8080"))
+						.uri("http://reminder-service:8082"))
 
 				.build();
 	}
