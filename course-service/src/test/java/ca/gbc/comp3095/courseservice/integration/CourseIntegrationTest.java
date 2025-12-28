@@ -12,13 +12,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ca.gbc.comp3095.courseservice.repository.CourseRepository;
-import ca.gbc.comp3095.gradeservice.repository.GradeRepository;
+import ca.gbc.comp3095.courseservice.model.Course;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Testcontainers
-public class IntegrationTestTemplate {
+public class CourseIntegrationTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
@@ -35,24 +35,15 @@ public class IntegrationTestTemplate {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
 
-        registry.add("spring.data.mongodb.uri", mongo::getReplicaSetUrl);
+        registry.add("spring.data.mongodb.uri", mongo::getConnectionString);
     }
 
     @Autowired
     private CourseRepository courseRepository;
 
-    @Autowired
-    private GradeRepository gradeRepository;
-
     @Test
     void testPostgresRepository() {
-        courseRepository.save(new ca.gbc.comp3095.courseservice.model.Course("Test Course"));
+        courseRepository.save(new Course("C101", "Test Course", "This is a test course"));
         assertThat(courseRepository.findAll()).isNotEmpty();
-    }
-
-    @Test
-    void testMongoRepository() {
-        gradeRepository.save(new ca.gbc.comp3095.gradeservice.model.Grade("Test Grade"));
-        assertThat(gradeRepository.findAll()).isNotEmpty();
     }
 }
