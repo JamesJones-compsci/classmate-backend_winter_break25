@@ -9,80 +9,124 @@
 #       - Forces rebuild of images before starting containers
 # ----------------------------------------------------------------------------------
 
-version: "3.9"
+# version: '3.9'
 
 services:
 
+  # ===============================
+  # PostgreSQL
+  # ===============================
+  postgres:
+    image: postgres:15
+    container_name: classmate-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  # ===============================
+  # MongoDB
+  # ===============================
+  mongodb:
+    image: mongo:7
+    container_name: classmate-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+
+  # ===============================
+  # Course Service
+  # ===============================
+  course-service:
+    build:
+      context: ./course-service
+    image: classmate_app-integrated-course-service
+    container_name: course-service
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/classmate
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8084:8080"
+
+  # ===============================
+  # Grade Service
+  # ===============================
+  grade-service:
+    build:
+      context: ./grade-service
+    image: classmate_app-integrated-grade-service
+    container_name: grade-service
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/classmate
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8085:8081"
+
+  # ===============================
+  # Task Service
+  # ===============================
+  task-service:
+    build:
+      context: ./task-service
+    image: classmate_app-integrated-task-service
+    container_name: task-service
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8086:8083"
+    restart: unless-stopped
+
+  # ===============================
+  # Reminder Service
+  # ===============================
+  reminder-service:
+    build:
+      context: ./reminder-service
+    image: classmate_app-integrated-reminder-service
+    container_name: reminder-service
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8087:8082"
+    restart: unless-stopped
+
+  # ===============================
+  # API Gateway
+  # ===============================
   api-gateway:
-    container_name: api-gateway
     build:
       context: ./api-gateway
-    ports:
-      - "8089:8088"         # Host port 8088 routes through gateway
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - classmate-network
+    image: classmate_app-integrated-api-gateway
+    container_name: api-gateway
     depends_on:
       - course-service
       - grade-service
       - task-service
       - reminder-service
-
-  course-service:
-    container_name: course-service
-    build:
-      context: ./course-service
-    ports:
-      - "8084:8080"
-    env_file:
-      - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - classmate-network
-
-
-  grade-service:
-    container_name: grade-service
-    build:
-      context: ./grade-service
+      SPRING_PROFILES_ACTIVE: docker
     ports:
-      - "8085:8081"
-    env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - classmate-network
-
-
-  task-service:
-    container_name: task-service
-    build:
-      context: ./task-service
-    ports:
-      - "8086:8083"
-    env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - classmate-network
-
-
-  reminder-service:
-    container_name: reminder-service
-    build:
-      context: ./reminder-service
-    ports:
-      - "8087:8082"
-    env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - classmate-network
+      - "8083:8080"
+    restart: unless-stopped
 
 networks:
   classmate-network:
