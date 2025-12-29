@@ -40,6 +40,10 @@ dependencies {
 	testImplementation 'com.h2database:h2'   // <-- Added this line to debug CourseRepositoryTest.java
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Testcontainers for JUnit 5
+	testImplementation 'org.testcontainers:junit-jupiter:1.20.3'
+	testImplementation 'org.testcontainers:postgresql:1.20.3'
 }
 
 tasks.named('test') {
