@@ -108,4 +108,49 @@ Implementation will occur in Day 9.
    Grades	Grade Activity Diagram
    GPA	User / GPA Activity Diagram (optional)
 
+6. Deployment Architecture (Docker Compose)
+
+The ClassMate backend is deployed using Docker Compose. Each microservice
+runs in its own container and connects to its own dedicated database.
+
+Services:
+- api-gateway
+- course-service (PostgreSQL)
+- grade-service (PostgreSQL)
+- task-service (MongoDB)
+- reminder-service (MongoDB)
+
+7. Database Initialization & Migrations
+
+PostgreSQL services use:
+- Flyway migrations (`db/migration`)
+- Docker init scripts (`docker/postgres/init.sql`)
+
+MongoDB services use:
+- Collection initialization via application startup
+- Testcontainers during integration testing
+
+8. Testing Strategy
+
+The project uses a layered testing approach:
+
+- Unit tests for controllers, services and repositories
+- Integration tests using Testcontainers
+- Containerized Postgres and MongoDB for reproducible test environments
+
+Each microservice contains integration tests under:
+`src/test/java/.../integration`
+
+Each database runs in an isolated container and is only accessible by its owning service.
+
+9. API Gateway Routing
+
+All client traffic flows through the API Gateway.
+
+Example routes:
+- /api/v1/courses → course-service
+- /api/v1/grades → grade-service
+- /api/v1/tasks → task-service
+- /api/v1/reminders → reminder-service
+
 Note: Diagrams are vertical, top-down layout. Decision nodes for validation loops in tasks and reminders.
