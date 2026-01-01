@@ -27,7 +27,7 @@ class TaskIntegrationTest {
     static void configureMongo(DynamicPropertyRegistry registry) {
         registry.add(
                 "spring.data.mongodb.uri",
-                mongo::getConnectionString
+                mongo::getReplicaSetUrl
         );
     }
 

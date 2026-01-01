@@ -7,16 +7,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class DataSourceConfig {
 
     @Bean
-    @ConditionalOnProperty(name = "POSTGRES_URL")
+    @Profile("docker")
     public DataSource postgresDataSource(
-            @Value("${POSTGRES_URL}") String url,
-            @Value("${POSTGRES_USERNAME}") String username,
-            @Value("${POSTGRES_PASSWORD}") String password) {
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password) {
+
         HikariDataSource ds = new HikariDataSource();
         ds.setJdbcUrl(url);
         ds.setUsername(username);
@@ -26,7 +28,7 @@ public class DataSourceConfig {
     }
 
     @Bean
-    @ConditionalOnMissingBean(DataSource.class)
+    @Profile("local")
     public DataSource h2DataSource() {
         HikariDataSource ds = new HikariDataSource();
         ds.setJdbcUrl("jdbc:h2:mem:gradedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");

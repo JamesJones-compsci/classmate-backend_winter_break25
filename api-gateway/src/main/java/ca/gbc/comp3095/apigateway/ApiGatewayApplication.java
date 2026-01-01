@@ -14,7 +14,7 @@ public class ApiGatewayApplication {
 
 		SpringApplication.run(ApiGatewayApplication.class, args);
 
-		System.out.println("API Gateway skeleton initialized (Day 9 Step 4).");
+		System.out.println("API Gateway initialized");
 	}
 
 	/*
